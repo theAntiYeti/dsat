@@ -105,4 +105,16 @@ impl Formula {
         return Reduced::Red(new_frm);
         
     }
+
+    pub fn get_var(&self) -> Option<u32> {
+        for cls in (*self).clauses.iter() {
+            if let Clause::Vars(props) = cls {
+                for Prop(val, name) in (*props).iter() {
+                    return Some(*name);
+                }
+            }
+        } 
+        return None;
+    }
+
 }

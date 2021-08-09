@@ -1,38 +1,75 @@
-mod logic;
+use crate::logic;
 use logic::Clause;
-use logic::Prop;
 use logic::Formula;
+use logic::Prop;
+use logic::Reduced;
 
+#[derive(Debug)]
 pub enum Marker {
     U, // Unit Propagate
     T, // Decide True
     F, // Decide False
 }
 
-pub fn dpll(&phi: Formula) -> Option<Vec<Prop>> {
-    let mut assign : Vec<Prop> = Vec::new(); // The vector representing the assignment
-    let mut history : Vec<Marker> = Vec::new(); // The marker history, for backtracking
+pub fn dpll(phi: &Formula) -> Option<Vec<Prop>> {
+    let mut assign: Vec<Prop> = Vec::new(); // The vector representing the assignment
+    let mut history: Vec<Marker> = Vec::new(); // The marker history, for backtracking
 
     let mut partial = (*phi).clone();
 
-    // Push the first literal to the assign queue.
-    let var = partial.get_var();
-    
-    if let Some(name) = var {
-        assign.push(Prop(true, name));
-        history.push(T);
-        partial = partial.mult_assign(&assign);
-    } // if var == None then the next while loop will be skipped completely.
+    // Unit Props. Don't assign to history.
+    loop {
+        let unit = partial.get_unit();
+        match unit {
+            None => break,
+            Some(prop) => {
+                assign.push(prop);
+                let result = partial.mult_assign(&vec![prop]);
 
-    while partial.len() > 0 {
+                match result {
+                    Reduced::UNSAT => return None, // If all we've done is unit propagate this has no chance.
+                    Reduced::Red(form) => partial = form,
+                }
+            }
+        }
+    }
+
+    while {
         // Check for completion
+        if partial.is_true() {
+            return Some(assign);
+        }
 
+        // Do an assignment
+        let var = partial.get_var().unwrap();
+        assign.push(Prop(true, var));
+        history.push(Marker::T);
+        let mut result = partial.mult_assign(&vec![Prop(true, var)]);
+        //println!("{:?}", result);
 
-        // Check for UNSAT and backtrack
+        // While UNSAT, we backtrack
+        while let Reduced::UNSAT = result {
+            while history.len() > 0 {
+                let mark = history.pop().unwrap();
+                let prop = assign.pop().unwrap();
+                if let Marker::T = mark {
+                    history.push(Marker::F);
+                    assign.push(Prop(false, prop.1));
+                    result = phi.mult_assign(&assign);
+                }
+            }
+        }
+
+        match result {
+            Reduced::UNSAT => panic!("result should not be unsat!"),
+            Reduced::Red(form) => partial = form,
+        }
+
         
 
-        // Make
-    }
+        // Condition
+        history.len() > 0
+    } {}
 
     return None;
 }

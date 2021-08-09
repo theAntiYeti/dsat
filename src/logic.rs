@@ -1,7 +1,7 @@
 use std::fmt;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct Prop(pub bool,pub u32);
+pub struct Prop(pub bool, pub u32);
 
 #[derive(Debug, Clone)]
 pub enum Clause {
@@ -27,9 +27,10 @@ impl fmt::Display for Clause {
                     outstr.push_str(" V ");
                 }
 
-                outstr.pop(); outstr.pop();
-                write!(f,"( {})", outstr)
-            },
+                outstr.pop();
+                outstr.pop();
+                write!(f, "( {})", outstr)
+            }
         }
     }
 }
@@ -49,8 +50,8 @@ impl Clause {
             } else {
                 return Clause::Vars(vs);
             }
-            
-        } else { // If already a base true or false, do nothing.
+        } else {
+            // If already a base true or false, do nothing.
             return new_cl;
         }
     }
@@ -58,7 +59,6 @@ impl Clause {
     pub fn mult_assign(&self, props: &Vec<Prop>) -> Clause {
         let mut red_step = (*self).clone();
         for prp in (*props).iter() {
-            
             red_step = red_step.assign(*prp);
             if let Clause::Vars(_) = red_step {
                 continue;
@@ -71,13 +71,12 @@ impl Clause {
     }
 }
 
-
 #[derive(Debug, Clone)]
 pub struct Formula {
     pub clauses: Vec<Clause>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Reduced {
     Red(Formula),
     UNSAT,
@@ -86,7 +85,7 @@ pub enum Reduced {
 /*
 impl fmt::Display for Formula {
     fn fmt(&self, &mut fmt::Formatter) -> fmt::Result {
-        
+
     }
 }
 */
@@ -103,7 +102,6 @@ impl Formula {
         }
 
         return Reduced::Red(new_frm);
-        
     }
 
     pub fn get_var(&self) -> Option<u32> {
@@ -113,8 +111,28 @@ impl Formula {
                     return Some(*name);
                 }
             }
-        } 
+        }
         return None;
     }
 
+    pub fn get_unit(&self) -> Option<Prop> {
+        for cls in (*self).clauses.iter() {
+            if let Clause::Vars(props) = cls {
+                if props.len() == 1 {
+                    return Some(props[0]);
+                }
+            }
+        }
+        return None;
+    }
+    pub fn is_true(&self) -> bool {
+        for clause in self.clauses.iter() {
+            if let Clause::T = clause {
+                continue;
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
 }

@@ -3,6 +3,8 @@ use logic::Clause;
 use logic::Prop;
 use logic::Formula;
 
+mod dpll;
+
 fn main() {
     let a_or_b = Clause::Vars(vec![Prop(false, 1), Prop(true, 2)]);
     let a_or_c = Clause::Vars(vec![Prop(false, 1), Prop(true, 3)]);
@@ -11,8 +13,11 @@ fn main() {
     println!("{:?}",  form);
     
     //let res = logic::assign(&a_or_b, 1, true);
-    let res = form.mult_assign(&vec![Prop(true,1), Prop(true,2), Prop(false, 3)]);
-
+    let res = form.mult_assign(&vec![Prop(false,1)]);
     println!("{:?}", res);
+
+    let stuff = dpll::dpll(&form);
+
+    println!("{:?}", stuff);
 
 }

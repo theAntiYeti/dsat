@@ -3,7 +3,7 @@ use std::fmt;
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Prop(pub bool, pub u32);
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Clause {
     Vars(Vec<Prop>),
     T,

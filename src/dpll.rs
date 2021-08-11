@@ -1,5 +1,4 @@
 use crate::logic;
-use logic::Clause;
 use logic::Formula;
 use logic::Prop;
 use logic::Reduced;
@@ -42,7 +41,7 @@ pub fn dpll(phi: &Formula) -> Option<Vec<Prop>> {
 
         // Do an assignment, check if can unit prop
         let unit = partial.get_unit();
-        let mut result = Reduced::UNSAT; // Placeholder
+        let mut result; // Placeholder
 
         match unit {
             Some(prop) => {

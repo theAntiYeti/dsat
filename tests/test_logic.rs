@@ -51,7 +51,6 @@ fn test_formula_mult_assign() {
         logic::Reduced::Red(logic::Formula {
             clauses: vec![
                 logic::Clause::Vars(vec![logic::Prop(true, 3)]),
-                logic::Clause::T
             ]
         })
     );

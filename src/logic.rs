@@ -92,16 +92,21 @@ impl fmt::Display for Formula {
 
 impl Formula {
     pub fn mult_assign(&self, props: &Vec<Prop>) -> Reduced {
-        let mut new_frm = (*self).clone();
+        let mut new_clauses: Vec<Clause> = Vec::with_capacity(self.clauses.len());
 
-        for i in 0..(new_frm.clauses.len()) {
-            new_frm.clauses[i] = new_frm.clauses[i].mult_assign(props);
-            if let Clause::F = new_frm.clauses[i] {
-                return Reduced::UNSAT;
+        for i in 0..(self.clauses.len()) {
+            let new_cl = self.clauses[i].mult_assign(props);
+
+            match new_cl {
+                Clause::F => return Reduced::UNSAT,
+                Clause::T => continue,
+                _ => new_clauses.push(new_cl),
             }
         }
 
-        return Reduced::Red(new_frm);
+        return Reduced::Red(Formula {
+            clauses: new_clauses,
+        });
     }
 
     pub fn get_var(&self) -> Option<u32> {

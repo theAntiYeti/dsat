@@ -49,9 +49,7 @@ fn test_formula_mult_assign() {
     assert_eq!(
         assigned,
         logic::Reduced::Red(logic::Formula {
-            clauses: vec![
-                logic::Clause::Vars(vec![logic::Prop(true, 3)]),
-            ]
+            clauses: vec![logic::Clause::Vars(vec![logic::Prop(true, 3)]),]
         })
     );
 }

@@ -1,7 +1,14 @@
 use crate::logic;
-use logic::Clause;
 use logic::Prop;
+use logic::Clause;
 
+/// Serializes a proposition as a String.
+///
+/// Returns parity indicator '!' and numerical index of Proposition.
+///
+/// # Arguments
+///
+/// * `prop` - Proposition to serialize.
 pub fn serialize_prop(prop: &Prop) -> String {
     let ex_indicator = if prop.0 { "" } else { "!" };
     format!("{}{}", ex_indicator, prop.1)
@@ -21,7 +28,7 @@ pub fn serialize_assignment(ass: &Vec<Prop>) -> String {
 }
 
 pub fn deserialize_clause(txt: &str) -> Result<Clause, Box<dyn std::error::Error>> {
-    let split = txt.split(",");
+    let split = txt.split(","); 
     let mut prop_list: Vec<Prop> = Vec::new();
 
     for part in split {

@@ -84,31 +84,35 @@ impl Clause {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+/// Represents a formula (in CNF) as a list of clauses.
 pub struct Formula {
     pub clauses: Vec<Clause>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
+/// A more lucid Option wrapper for dealing with operations on formulae.
 pub enum Reduced {
     Red(Formula),
     UNSAT,
 }
 
-/*
-impl fmt::Display for Formula {
-    fn fmt(&self, &mut fmt::Formatter) -> fmt::Result {
-
-    }
-}
-*/
-
 impl Formula {
+
+    /// Returns result of assigning props to self.
+    ///
+    /// Returns UNSAT if any clause evaluated to F.
+    ///
+    /// # Arguments
+    ///
+    /// * `props` - Vector of Prop representing partial assignment.
     pub fn mult_assign(&self, props: &Vec<Prop>) -> Reduced {
         let mut new_clauses: Vec<Clause> = Vec::with_capacity(self.clauses.len());
 
         for i in 0..(self.clauses.len()) {
             let new_cl = self.clauses[i].mult_assign(props);
 
+            // F represents unsatisfiable (all need be true in SAT), T can be
+            // ommitted as the empty conjunction is defined to be true.
             match new_cl {
                 Clause::F => return Reduced::UNSAT,
                 Clause::T => continue,
@@ -121,6 +125,10 @@ impl Formula {
         });
     }
 
+    /// Returns a variable still represented in the formula.
+    ///
+    /// In the context of the algorithms *should* be guaranteed
+    /// to return something not yet assigned.
     pub fn get_var(&self) -> Option<u32> {
         for cls in (*self).clauses.iter() {
             if let Clause::Vars(props) = cls {
@@ -132,6 +140,7 @@ impl Formula {
         return None;
     }
 
+    /// Returns a unit clause, if present, for unit propagation.
     pub fn get_unit(&self) -> Option<Prop> {
         for cls in (*self).clauses.iter() {
             if let Clause::Vars(props) = cls {
@@ -142,6 +151,8 @@ impl Formula {
         }
         return None;
     }
+
+    /// Returns true if clauses empty (empty disjunction) or all true.
     pub fn is_true(&self) -> bool {
         for clause in self.clauses.iter() {
             if let Clause::T = clause {

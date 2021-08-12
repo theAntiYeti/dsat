@@ -3,8 +3,9 @@ use std::str::FromStr;
 use tokio_test::assert_err;
 
 use dsat::logic;
-use logic::Prop;
 use dsat::serialize;
+use logic::Clause;
+use logic::Prop;
 
 /* Test serialize_prop */
 #[test]
@@ -35,7 +36,33 @@ fn test_deserialize_prop_error() {
 /* Test serialize_assignment */
 #[test]
 fn test_serialize_assignment() {
-    let clause = vec![Prop(true, 2), Prop(false, 70), Prop(false, 29), Prop(true,15)];
+    let clause = vec![
+        Prop(true, 2),
+        Prop(false, 70),
+        Prop(false, 29),
+        Prop(true, 15),
+    ];
     let expected = String::from_str("2,!70,!29,15").unwrap();
-    assert_eq!(serialize::serialize_assignment(&clause),expected);
+    assert_eq!(serialize::serialize_assignment(&clause), expected);
+}
+
+/* Test deserialize_clause */
+#[test]
+fn test_deserialize_clause_success() {
+    let input_str = "2,!70,!29,15";
+    let clause = Clause::Vars(vec![
+        Prop(true, 2),
+        Prop(false, 70),
+        Prop(false, 29),
+        Prop(true, 15),
+    ]);
+
+    assert_eq!(clause, serialize::deserialize_clause(input_str).unwrap());
+}
+
+#[test]
+fn test_deserialize_clause_fail() {
+    let input_str = "2,!a70,!29,15";
+
+    assert_err!(serialize::deserialize_clause(input_str));
 }

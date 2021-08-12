@@ -97,7 +97,6 @@ pub enum Reduced {
 }
 
 impl Formula {
-
     /// Returns result of assigning props to self.
     ///
     /// Returns UNSAT if any clause evaluated to F.

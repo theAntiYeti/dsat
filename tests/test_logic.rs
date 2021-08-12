@@ -1,4 +1,3 @@
-use dsat;
 use dsat::logic;
 
 /* Test Clause */

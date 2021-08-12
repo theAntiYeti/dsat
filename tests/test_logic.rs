@@ -23,3 +23,11 @@ fn test_clause_assign_false() {
     let assigned_2 = assigned_1.assign(logic::Prop(true, 2));
     assert_eq!(assigned_2, logic::Clause::F);
 }
+
+#[test]
+fn test_clause_mult_assign() {
+    let test_clause = logic::Clause::Vars(vec![logic::Prop(false, 1), logic::Prop(false, 2)]);
+    let assigned = test_clause.mult_assign(&vec![logic::Prop(true, 1), logic::Prop(true, 2)]);
+
+    assert_eq!(assigned, logic::Clause::F);
+}

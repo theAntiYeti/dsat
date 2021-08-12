@@ -1,5 +1,6 @@
 use crate::logic;
 use logic::Clause;
+use logic::Formula;
 use logic::Prop;
 
 /// Serializes a proposition as a String.
@@ -51,4 +52,22 @@ pub fn deserialize_clause(txt: &str) -> Result<Clause, Box<dyn std::error::Error
     }
 
     Ok(Clause::Vars(prop_list))
+}
+
+/// Takes a serialized formula and attempts to parse.
+///
+/// # Arguments
+///
+/// * `txt` - String to deserialize.
+pub fn deserialize_formula(txt: &str) -> Result<Formula, Box<dyn std::error::Error>> {
+    let split = txt.split("&");
+    let mut clause_list: Vec<Clause> = Vec::new();
+
+    for part in split {
+        clause_list.push(deserialize_clause(part)?);
+    }
+
+    Ok(Formula {
+        clauses: clause_list,
+    })
 }

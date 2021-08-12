@@ -1,8 +1,8 @@
 #[macro_use]
 extern crate serial_test;
 
-use dsat::logic;
 use dsat::dpll;
+use dsat::logic;
 use dsat::serialize;
 
 /* Passing tests */
@@ -16,9 +16,12 @@ fn test_solver1() {
     println!("Formula deserialized: {:?}", formula);
     let solution = dpll::dpll(&formula).unwrap();
     println!("Solution: {:?}", solution);
-    
+
     let expected: Vec<logic::Clause> = vec![];
-    assert_eq!(formula.mult_assign(&solution), logic::Reduced::Red(logic::Formula { clauses: expected}));
+    assert_eq!(
+        formula.mult_assign(&solution),
+        logic::Reduced::Red(logic::Formula { clauses: expected })
+    );
 }
 
 #[test]
@@ -31,11 +34,13 @@ fn test_solver2() {
     println!("Formula deserialized: {:?}", formula);
     let solution = dpll::dpll(&formula).unwrap();
     println!("Solution: {:?}", solution);
-    
-    let expected: Vec<logic::Clause> = vec![];
-    assert_eq!(formula.mult_assign(&solution), logic::Reduced::Red(logic::Formula { clauses: expected}));
-}
 
+    let expected: Vec<logic::Clause> = vec![];
+    assert_eq!(
+        formula.mult_assign(&solution),
+        logic::Reduced::Red(logic::Formula { clauses: expected })
+    );
+}
 
 /* Test UNSAT */
 #[test]

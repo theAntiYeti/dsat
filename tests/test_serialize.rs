@@ -1,5 +1,6 @@
 use std::str::FromStr;
 
+extern crate tokio_test;
 use tokio_test::assert_err;
 
 use dsat::logic;

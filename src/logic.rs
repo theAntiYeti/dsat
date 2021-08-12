@@ -1,9 +1,11 @@
 use std::fmt;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
+/// Represents a variable and whether it's true or false.
 pub struct Prop(pub bool, pub u32);
 
 #[derive(Debug, Clone, PartialEq)]
+/// Represents a clause of variables disjuncted together.
 pub enum Clause {
     Vars(Vec<Prop>),
     T,
@@ -36,6 +38,11 @@ impl fmt::Display for Clause {
 }
 
 impl Clause {
+    /// Performs variable assignment and returns a clause representing the result.
+    ///
+    /// # Arguments
+    ///
+    /// * `ass` - Prop representing the variable to assign and what value to give.
     pub fn assign(&self, ass: Prop) -> Clause {
         let new_cl = (*self).clone();
 
@@ -56,6 +63,11 @@ impl Clause {
         }
     }
 
+    /// Takes a partial assignment and applies to clause returning result.
+    ///
+    /// # Arguments
+    ///
+    /// * `props` - Vector of Prop representing partial assignment.
     pub fn mult_assign(&self, props: &Vec<Prop>) -> Clause {
         let mut red_step = (*self).clone();
         for prp in (*props).iter() {

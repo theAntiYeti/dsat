@@ -3,7 +3,7 @@ use std::fmt;
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Prop(pub bool, pub u32);
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Clause {
     Vars(Vec<Prop>),
     T,
@@ -71,12 +71,12 @@ impl Clause {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Formula {
     pub clauses: Vec<Clause>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Reduced {
     Red(Formula),
     UNSAT,
@@ -107,7 +107,7 @@ impl Formula {
     pub fn get_var(&self) -> Option<u32> {
         for cls in (*self).clauses.iter() {
             if let Clause::Vars(props) = cls {
-                for Prop(val, name) in (*props).iter() {
+                for Prop(_val, name) in (*props).iter() {
                     return Some(*name);
                 }
             }

@@ -1,5 +1,4 @@
 use crate::logic;
-use logic::Clause;
 use logic::Formula;
 use logic::Prop;
 use logic::Reduced;
@@ -40,13 +39,24 @@ pub fn dpll(phi: &Formula) -> Option<Vec<Prop>> {
             return Some(assign);
         }
 
-        // Do an assignment
-        let var = partial.get_var().unwrap();
-        assign.push(Prop(true, var));
-        history.push(Marker::T);
-        let mut result = partial.mult_assign(&vec![Prop(true, var)]);
-        //println!("{:?}", result);
+        // Do an assignment, check if can unit prop
+        let unit = partial.get_unit();
+        let mut result; // Placeholder
 
+        match unit {
+            Some(prop) => {
+                assign.push(prop);
+                history.push(Marker::U);
+                result = partial.mult_assign(&vec![prop]);
+            }
+            None => {
+                let var = partial.get_var().unwrap();
+                assign.push(Prop(true, var));
+                history.push(Marker::T);
+                result = partial.mult_assign(&vec![Prop(true, var)]);
+                //println!("{:?}", result);
+            }
+        }
         // While UNSAT, we backtrack
         while let Reduced::UNSAT = result {
             while history.len() > 0 {
@@ -64,8 +74,6 @@ pub fn dpll(phi: &Formula) -> Option<Vec<Prop>> {
             Reduced::UNSAT => panic!("result should not be unsat!"),
             Reduced::Red(form) => partial = form,
         }
-
-        
 
         // Condition
         history.len() > 0

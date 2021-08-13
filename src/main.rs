@@ -1,24 +1,28 @@
-mod logic;
-use logic::Clause;
-use logic::Formula;
-use logic::Prop;
+#[macro_use] extern crate rocket;
 
 mod dpll;
+use dsat::{dpll::dpll, serialize::{deserialize_formula, serialize_assignment}};
+use std::str::FromStr;
 
-fn main() {
-    let a_or_b = Clause::Vars(vec![Prop(false, 1), Prop(true, 2)]);
-    let a_or_c = Clause::Vars(vec![Prop(false, 1), Prop(true, 3)]);
+#[post("/solve", data = "<ser_formula>")]
+fn solve(ser_formula: &str) -> String {
+    let formula = deserialize_formula(ser_formula);
 
-    let form = Formula {
-        clauses: (vec![a_or_b, a_or_c]),
-    };
-    println!("{:?}", form);
+    match formula {
+        Err(_) => return String::from_str("Parse error!").unwrap(),
+        Ok(frm) => {
+            let assignment = dpll(&frm);
+            match assignment {
+                Some(ass) => return serialize_assignment(&ass),
+                None => return String::from_str("UNSAT").unwrap(),
+            }
+        },
+    }
+}
 
-    //let res = logic::assign(&a_or_b, 1, true);
-    let res = form.mult_assign(&vec![Prop(false, 1)]);
-    println!("{:?}", res);
 
-    let stuff = dpll::dpll(&form);
 
-    println!("{:?}", stuff);
+#[launch]
+fn launch() -> _ {
+   rocket::build().mount("/", routes![solve]) 
 }

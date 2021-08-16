@@ -14,10 +14,11 @@ use std::str::FromStr;
 
 #[post("/solve", data = "<ser_formula>")]
 fn solve(ser_formula: String) -> String {
-    let repped = ser_formula.replace("%2C", ",").replace("%26","&");
+    let repped = ser_formula.replace("%2C", ",").replace("%26","&").replace("%21", "!");
     let split: Vec<&str> = repped.split("=").collect();
     let translated = split[1];
     let formula = deserialize_formula(translated);
+    println!("{}", translated);
 
     match formula {
         Err(_) => return format!("Parse error: {}", translated),

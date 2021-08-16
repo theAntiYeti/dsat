@@ -18,7 +18,7 @@ fn solve(ser_formula: String) -> String {
     let split: Vec<&str> = repped.split("=").collect();
     let translated = split[1];
     let formula = deserialize_formula(translated);
-    println!("{}", translated);
+    //println!("{}", translated);
 
     match formula {
         Err(_) => return format!("Parse error: {}", translated),

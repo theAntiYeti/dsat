@@ -33,7 +33,11 @@ pub fn dpll(phi: &Formula) -> Option<Vec<Prop>> {
         }
     }
 
+    let mut backtrack_counter = 0;
+
     while {
+        //println!("{:?}", assign);
+        //println!("{:?}", history);
         // Check for completion
         if partial.is_true() {
             return Some(assign);
@@ -54,11 +58,12 @@ pub fn dpll(phi: &Formula) -> Option<Vec<Prop>> {
                 assign.push(Prop(true, var));
                 history.push(Marker::T);
                 result = partial.mult_assign(&vec![Prop(true, var)]);
-                //println!("{:?}", result);
             }
         }
         // While UNSAT, we backtrack
         while let Reduced::UNSAT = result {
+            println!("Backtracks: {}",backtrack_counter);
+            backtrack_counter += 1;
             while history.len() > 0 {
                 let mark = history.pop().unwrap();
                 let prop = assign.pop().unwrap();
@@ -66,6 +71,7 @@ pub fn dpll(phi: &Formula) -> Option<Vec<Prop>> {
                     history.push(Marker::F);
                     assign.push(Prop(false, prop.1));
                     result = phi.mult_assign(&assign);
+                    break;
                 }
             }
         }

@@ -66,6 +66,7 @@ pub fn dpll(phi: &Formula) -> Option<Vec<Prop>> {
                     history.push(Marker::F);
                     assign.push(Prop(false, prop.1));
                     result = phi.mult_assign(&assign);
+                    break;
                 }
             }
         }
